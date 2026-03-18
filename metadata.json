@@ -1,0 +1,7 @@
+{
+  "name": "HireSense AI",
+  "description": "An adaptive AI-powered interview training platform with multi-agent intelligence, resume analysis, and personalized coaching.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

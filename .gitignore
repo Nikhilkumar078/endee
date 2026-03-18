@@ -1,32 +1,8 @@
-
-# Ignore build directory
+node_modules/
 build/
-# Ignore build like directory
-build*/
-# Ignore all files in the build directory
-build/*
-
-# Ignore tests build directory
-tests/build/
-tests/build*/
-
-# Test binaries
-tests/**/ndd_filter_test
-
-# macOS debug symbols
-*.dSYM/
-
-# Sometimes data files are created for tetsing
-data/
-data/*
-
-# VS Code directory
-.vscode/
-.vscode/*
-
-# Frontend
-frontend/
-frontend/*
-
-# DS Store
+dist/
+coverage/
 .DS_Store
+*.log
+.env*
+!.env.example

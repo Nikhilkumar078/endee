@@ -1,0 +1,58 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isGuest(userId) {
+      return userId == 'guest_user_v1';
+    }
+
+    function isOwner(userId) {
+      return (isAuthenticated() && request.auth.uid == userId) || isGuest(userId);
+    }
+    
+    function isDocOwner() {
+      return (isAuthenticated() && request.auth.uid == resource.data.userId) || isGuest(resource.data.userId);
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "rnikhilkumar14@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow read: if isAuthenticated() || isGuest(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+    }
+
+    // Interviews
+    match /interviews/{interviewId} {
+      allow read: if (isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin())) || isGuest(resource.data.userId);
+      allow create: if (isAuthenticated() && request.resource.data.userId == request.auth.uid) || isGuest(request.resource.data.userId);
+      allow update: if (isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin())) || isGuest(resource.data.userId);
+      allow delete: if (isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin())) || isGuest(resource.data.userId);
+    }
+
+    // Weaknesses
+    match /weaknesses/{weaknessId} {
+      allow read: if (isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin())) || isGuest(resource.data.userId);
+      allow create: if (isAuthenticated() && request.resource.data.userId == request.auth.uid) || isGuest(request.resource.data.userId);
+      allow update: if (isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin())) || isGuest(resource.data.userId);
+      allow delete: if (isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin())) || isGuest(resource.data.userId);
+    }
+
+    // Prep Plans
+    match /plans/{planId} {
+      allow read: if (isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin())) || isGuest(resource.data.userId);
+      allow create: if (isAuthenticated() && request.resource.data.userId == request.auth.uid) || isGuest(request.resource.data.userId);
+      allow update: if (isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin())) || isGuest(resource.data.userId);
+      allow delete: if (isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin())) || isGuest(resource.data.userId);
+    }
+  }
+}
